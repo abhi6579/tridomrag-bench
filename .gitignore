@@ -1,14 +1,23 @@
+# Python
 venv/
 __pycache__/
 *.pyc
-.pytest_cache/
+*.pyo
+
+# Environment
 .env
-.env.local
-.vscode/
-.idea/
-*.swp
+
+# Data, results, paper
+data/
+results/
+paper/
+
+# Phase 2 (not ready yet)
+phase2/
+
+# Logs and OS
+*.log
 .DS_Store
 Thumbs.db
-data/documents/*
-!data/documents/.gitkeep
-*.log
+.vscode/
+.idea/
