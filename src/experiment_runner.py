@@ -42,6 +42,8 @@ from src.retrieval_configs import (
     build_retriever, prepare_corpus,
 )
 from src.dhs_metric        import DHSMetric
+from dotenv import load_dotenv
+load_dotenv()
 from src.llm_config        import get_llm
 
 logger = logging.getLogger(__name__)
@@ -279,7 +281,7 @@ if __name__ == "__main__":
     parser.add_argument("--config", default=None,
                         help="Run single config e.g. bm25_chunk")
     parser.add_argument("--llm",    default="local",
-                        choices=["local", "openai"],
+                        choices=["local", "openai", "groq"],
                         help="LLM backend to use")
     parser.add_argument("--nli",    action="store_true",
                         help="Enable NLI scoring (needs GPU)")
