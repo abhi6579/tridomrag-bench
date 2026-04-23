@@ -216,12 +216,14 @@ class DenseRetriever:
     def _load_model(self) -> None:
         try:
             from sentence_transformers import SentenceTransformer
+            import torch
+            device = 'cuda' if torch.cuda.is_available() else 'cpu'
             try:
-                self.model = SentenceTransformer(self.MODEL_NAME)
-                logger.info(f"Dense model loaded: {self.MODEL_NAME}")
+                self.model = SentenceTransformer(self.MODEL_NAME, device=device)
+                logger.info(f"Dense model loaded: {self.MODEL_NAME} on {device}")
             except Exception:
-                self.model = SentenceTransformer(self.FALLBACK)
-                logger.info(f"Dense model loaded (fallback): {self.FALLBACK}")
+                self.model = SentenceTransformer(self.FALLBACK, device=device)
+                logger.info(f"Dense model loaded (fallback): {self.FALLBACK} on {device}")
         except ImportError:
             logger.warning("sentence-transformers not available — dense retrieval disabled")
 
@@ -262,10 +264,10 @@ class HybridRetriever:
     alpha=0.5 by default (paper setting).
     """
 
-    def __init__(self, alpha: float = 0.5):
+    def __init__(self, alpha: float = 0.5, shared_dense=None):
         self.alpha  = alpha
         self.bm25   = BM25Retriever()
-        self.dense  = DenseRetriever()
+        self.dense  = shared_dense if shared_dense else DenseRetriever()
         self.docs   : List[str]  = []
         self.meta   : List[Dict] = []
 
@@ -319,14 +321,14 @@ class HybridRetriever:
 #  UNIFIED RETRIEVE FUNCTION
 # ─────────────────────────────────────────────────────────────────────────────
 
-def build_retriever(config: RetrievalConfig):
+def build_retriever(config: RetrievalConfig, shared_dense=None):
     """Factory — returns the right retriever for a config."""
     if config.strategy == RetrievalStrategy.BM25:
         return BM25Retriever()
     elif config.strategy == RetrievalStrategy.DENSE:
-        return DenseRetriever()
+        return shared_dense if shared_dense else DenseRetriever()
     else:
-        return HybridRetriever(alpha=config.hybrid_alpha)
+        return HybridRetriever(alpha=config.hybrid_alpha, shared_dense=shared_dense)
 
 
 # ─────────────────────────────────────────────────────────────────────────────

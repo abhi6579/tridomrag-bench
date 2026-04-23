@@ -71,6 +71,8 @@ class GroqLLM(BaseLLM):
         except ImportError:
             logger.warning("groq package not installed. Run: pip install groq")
     def generate(self, question, context, domain="general"):
+        import time
+        time.sleep(0.5)
         if self._client is None: return "ERROR: Groq client not available"
         prompt = RAG_PROMPT.format(domain=domain, context=context[:3000], question=question)
         try:

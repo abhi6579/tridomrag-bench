@@ -81,6 +81,11 @@ class ExperimentRunner:
         self.loader       = DatasetLoader(sample_size=sample_size)
         RESULTS_DIR.mkdir(exist_ok=True)
 
+        from src.retrieval_configs import DenseRetriever
+        logger.info("Pre-loading Dense model once for all configs...")
+        self._shared_dense = DenseRetriever()
+        logger.info("Dense model ready.")
+
         logger.info(f"ExperimentRunner ready")
         logger.info(f"  Configs      : {[c.name for c in self.configs]}")
         logger.info(f"  Sample size  : {sample_size} per domain")
@@ -174,7 +179,7 @@ class ExperimentRunner:
         )
 
         # 2. Index
-        retriever = build_retriever(config)
+        retriever = build_retriever(config, shared_dense=self._shared_dense)
         retriever.index(corpus_texts, corpus_meta)
 
         # 3. Run per sample
