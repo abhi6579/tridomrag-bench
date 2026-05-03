@@ -1,11 +1,11 @@
-# TriDomRAG-Bench 🧠
+# TriDomRAG-Bench ??
 
 > The first benchmark that simultaneously evaluates RAG systems across three high-stakes domains under a unified evaluation protocol.
 
-[![Python](https://img.shields.io/badge/Python-3.12-blue.svg)](https://python.org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://img.shields.io/badge/Tests-20%2F20%20passing-brightgreen.svg)](test_phase1.py)
-[![LLM](https://img.shields.io/badge/LLM-Groq%20%7C%20OpenAI%20%7C%20Local-orange.svg)](src/llm_config.py)
+![Python](https://img.shields.io/badge/Python-3.12-blue.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)
+![Tests](https://img.shields.io/badge/Tests-20%2F20%20passing-brightgreen.svg)
+![LLM](https://img.shields.io/badge/LLM-Groq%20%7C%20OpenAI%20%7C%20AICredits-orange.svg)
 
 ---
 
@@ -43,62 +43,70 @@ DHS(a, C, a*, d) = alpha_d * F(a,C) + beta_d * A(a,C) + gamma_d * T(a,a*,d)
 
 ### Domain Weights
 
-| Domain     | alpha (Faithfulness) | beta (Attribution) | gamma (Terminology) |
-|------------|---------------------|--------------------|---------------------|
-| Healthcare | 0.40                | 0.30               | 0.30                |
-| Legal      | 0.35                | 0.45               | 0.20                |
-| Finance    | 0.30                | 0.25               | 0.45                |
+| Domain | alpha (Faithfulness) | beta (Attribution) | gamma (Terminology) |
+|--------|---------------------|-------------------|-------------------|
+| Healthcare | 0.40 | 0.30 | 0.30 |
+| Legal | 0.35 | 0.45 | 0.20 |
+| Finance | 0.30 | 0.25 | 0.45 |
 
 ### Answer Type Handling
 
-| Type   | Description       | Scoring Method                   |
-|--------|-------------------|----------------------------------|
-| Type-T | Textual answers   | NLI-based / token overlap        |
+| Type | Description | Scoring Method |
+|------|-------------|---------------|
+| Type-T | Textual answers | NLI-based / token overlap |
 | Type-N | Numerical answers | Proximity formula with tolerance |
-| Type-E | Entity answers    | Normalised string match          |
+| Type-E | Entity answers | Normalised string match |
 
 ---
 
 ## Dataset
 
-| Domain     | Source       | Samples | Answer Types       |
-|------------|--------------|---------|--------------------|
-| Healthcare | PubMedQA     | 400     | Textual, Entity    |
-| Legal      | LegalBench   | 400     | Textual, Entity    |
-| Finance    | FinanceBench | 400     | Numerical, Textual |
+| Domain | Source | Samples | Answer Types |
+|--------|--------|---------|-------------|
+| Healthcare | PubMedQA | 400 | Textual, Entity |
+| Legal | LegalBench | 400 | Textual, Entity |
+| Finance | FinanceBench | 400 | Numerical, Textual |
 
 ---
 
 ## 6 RAG Configurations
 
-| Config          | Retriever   | Granularity    |
-|-----------------|-------------|----------------|
-| bm25_chunk      | BM25        | Chunk-level    |
-| bm25_document   | BM25        | Document-level |
-| dense_chunk     | Dense (BGE) | Chunk-level    |
-| dense_document  | Dense (BGE) | Document-level |
-| hybrid_chunk    | BM25+Dense  | Chunk-level    |
-| hybrid_document | BM25+Dense  | Document-level |
+| Config | Retriever | Granularity |
+|--------|-----------|-------------|
+| bm25_chunk | BM25 | Chunk-level |
+| bm25_document | BM25 | Document-level |
+| dense_chunk | Dense (BGE) | Chunk-level |
+| dense_document | Dense (BGE) | Document-level |
+| hybrid_chunk | BM25+Dense | Chunk-level |
+| hybrid_document | BM25+Dense | Document-level |
 
 Embedding Model: BAAI/bge-base-en-v1.5
 
 ---
 
-## Results
+## Preliminary Results (10 samples, GPT-4o-mini via AICredits)
 
-Full results from 400-sample run using Llama-3.3-70B via Groq API.
-Results table will be updated after full experiment run.
+| Config | Healthcare | Legal | Finance | Avg DHS |
+|--------|-----------|-------|---------|---------|
+| bm25_chunk | 0.578 | 0.260 | 0.375 | 0.404 |
+| bm25_document | 0.563 | 0.260 | 0.418 | 0.414 |
+| dense_chunk | 0.519 | 0.260 | 0.383 | 0.387 |
+| dense_document | 0.490 | 0.260 | 0.383 | 0.378 |
+| hybrid_chunk | 0.521 | 0.260 | 0.427 | 0.403 |
+| hybrid_document | 0.520 | 0.260 | 0.419 | 0.400 |
+
+Full 400-sample results coming soon.
 
 ---
 
 ## Failure Taxonomy
 
-| Code | Name                    | Description                             |
-|------|-------------------------|-----------------------------------------|
-| F1   | Wrong Chunk             | Retriever fetched irrelevant chunks     |
-| F2   | Numerical Hallucination | LLM fabricated numbers not in context  |
-| F3   | Terminology Mismatch    | Wrong domain vocabulary used            |
-| F4   | Attribution Gap         | Answer not traceable to any source      |
+| Code | Name | Description |
+|------|------|-------------|
+| F1 | Wrong Chunk | Retriever fetched irrelevant chunks |
+| F2 | Numerical Hallucination | LLM fabricated numbers not in context |
+| F3 | Terminology Mismatch | Wrong domain vocabulary used |
+| F4 | Attribution Gap | Answer not traceable to any source |
 
 ---
 
@@ -106,74 +114,67 @@ Results table will be updated after full experiment run.
 
 tridomrag-bench/
   core/
-    domain_models.py        - DHS types, BenchmarkSample, DHSResult, FailureMode
-    models.py               - base data models
-    exceptions.py           - custom exceptions
+    domain_models.py       - DHS types, BenchmarkSample, DHSResult, FailureMode
+    models.py              - base data models
+    exceptions.py          - custom exceptions
   src/
-    dataset_loader.py       - downloads PubMedQA / LegalBench / FinanceBench
-    terminology_lexicon.py  - SNOMED / Black Law / XBRL term extraction
-    dhs_metric.py           - DHS scoring engine (F + A + T)
-    retrieval_configs.py    - BM25, Dense, Hybrid + 6 configs
-    llm_config.py           - Groq / OpenAI / local LLM switch
-    experiment_runner.py    - full pipeline orchestrator
+    dataset_loader.py      - downloads PubMedQA / LegalBench / FinanceBench
+    terminology_lexicon.py - SNOMED / Black Law / XBRL term extraction
+    dhs_metric.py          - DHS scoring engine (F + A + T)
+    retrieval_configs.py   - BM25, Dense, Hybrid + 6 configs
+    llm_config.py          - Groq / OpenAI / AICredits LLM switch
+    experiment_runner.py   - full pipeline orchestrator
   config/settings.py
-  test_phase1.py            - 20/20 tests passing
-  demo.py                   - 60-second live demo
-  colab_run.ipynb           - one-click Google Colab notebook
-  requirements.txt
+  test_phase1.py           - 20/20 tests passing
+  requirements.txt         - universal, works on Windows/Linux/Colab
 
 ---
 
 ## Quick Start
 
+### Windows
   git clone https://github.com/abhi6579/tridomrag-bench.git
   cd tridomrag-bench
-  python -m venv venv && source venv/bin/activate
+  py -3.12 -m venv venv
+  venv\Scripts\activate
+  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
   pip install -r requirements.txt
 
-Create .env file:
+### Linux / WSL / Colab
+  git clone https://github.com/abhi6579/tridomrag-bench.git
+  cd tridomrag-bench
+  python3.12 -m venv venv
+  source venv/bin/activate
+  pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+  pip install -r requirements.txt
+
+### Create .env file
+  LLM_PROVIDER=openai
+  OPENAI_API_KEY=sk-...
+  OPENAI_BASE_URL=https://api.aicredits.in/v1
+  OPENAI_MODEL=openai/gpt-4o-mini
+
+  OR use Groq (free):
   LLM_PROVIDER=groq
   GROQ_API_KEY=gsk_...
 
-Run tests:
+### Run tests
   python test_phase1.py
 
-Run experiments:
-  python src/experiment_runner.py --mode dev --config hybrid_document --llm groq
-  python src/experiment_runner.py --mode full --llm groq
+### Run experiments
+  python src/experiment_runner.py --mode dev --llm openai
+  python src/experiment_runner.py --mode full --llm openai
 
 ---
 
-## Run on Google Colab (Free GPU)
+## LLM Provider Options
 
-Open colab_run.ipynb in Google Colab for a one-click full run with free T4 GPU.
-https://colab.research.google.com/github/abhi6579/tridomrag-bench/blob/main/colab_run.ipynb
-
----
-
-## Requirements
-
-| Package               | Version | Purpose            |
-|-----------------------|---------|--------------------|
-| torch                 | 2.11.0  | Deep learning      |
-| transformers          | 5.5.0   | HuggingFace models |
-| sentence-transformers | 5.3.0   | BGE embeddings     |
-| chromadb              | 1.5.5   | Vector store       |
-| datasets              | 4.8.4   | Dataset loading    |
-| pydantic              | 2.12.5  | Data validation    |
-| groq                  | 1.1.2   | Free LLM API       |
-| rank-bm25             | 0.2.2   | Sparse retrieval   |
-| python-dotenv         | 1.x     | .env loading       |
-
----
-
-## LLM Provider Comparison
-
-| Provider | Model         | Cost  | Quality   | Use Case      |
-|----------|---------------|-------|-----------|---------------|
-| Groq     | Llama-3.3-70B | FREE  | Excellent | Paper results |
-| OpenAI   | GPT-3.5-Turbo | ~$1-2 | Excellent | Alternative   |
-| Local    | distilgpt2    | Free  | Weak      | Dev only      |
+| Provider | Model | Cost | Quality | How to get |
+|----------|-------|------|---------|------------|
+| AICredits | GPT-4o-mini | ~Rs 210 full run | Excellent | aicredits.in (UPI/Indian debit card) |
+| Groq | Llama-3.3-70B | FREE | Excellent | console.groq.com |
+| OpenAI | GPT-4o-mini | ~ full run | Excellent | platform.openai.com |
+| Local | distilgpt2 | Free | Dev only | auto-downloaded |
 
 ---
 
@@ -184,7 +185,7 @@ Title    : TriDomRAG-Bench: A Tri-Domain Benchmark for Evaluating Hallucination,
 Author   : Abhinav Mishra (sole author)
 Supervisor: Dr. Vineet Mehan, NIET, NIMS University, Jaipur, India
 Target   : EMNLP 2026 / ACL Findings
-Status   : Pipeline complete, full run in progress. arXiv preprint coming soon.
+Status   : Pipeline complete, full 400-sample run in progress.
 
 ---
 
@@ -202,10 +203,9 @@ Status   : Pipeline complete, full run in progress. arXiv preprint coming soon.
 
 ## License
 
-MIT License
-Copyright (c) 2026 Abhinav Mishra
+MIT License - Copyright (c) 2026 Abhinav Mishra
 NIET (NIMS Institute of Engineering and Technology), NIMS University, Jaipur, India
 
 ---
 
-Built with love by Abhinav Mishra | NIET, NIMS University, Jaipur, India
+Built with passion by Abhinav Mishra | NIET, NIMS University, Jaipur, India

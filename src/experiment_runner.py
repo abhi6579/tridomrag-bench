@@ -292,7 +292,7 @@ if __name__ == "__main__":
                         help="Enable NLI scoring (needs GPU)")
     args = parser.parse_args()
 
-    sample_size = 10 if args.mode == "dev" else 400
+    sample_size = 3 if args.mode == "dev" else 400
 
     runner = ExperimentRunner(
         sample_size  = sample_size,

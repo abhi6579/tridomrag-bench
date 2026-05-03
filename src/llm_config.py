@@ -1,6 +1,7 @@
 """
-llm_config.py — supports local / openai / groq
-LLM_PROVIDER=groq + GROQ_API_KEY in .env for paper results
+llm_config.py — supports local / openai / groq / together
+LLM_PROVIDER=together + TOGETHER_API_KEY in .env for paper results
+LLM_PROVIDER=groq    + GROQ_API_KEY in .env (dev only — token limits)
 """
 import os, logging
 from abc import ABC, abstractmethod
@@ -89,7 +90,7 @@ class GroqLLM(BaseLLM):
     def is_available(self): return self._client is not None
 
 class OpenAILLM(BaseLLM):
-    MODEL_NAME = "gpt-3.5-turbo-0125"
+    MODEL_NAME = "openai/gpt-4o-mini"
     def __init__(self, max_tokens: int = 300, temperature: float = 0.0):
         self.max_tokens = max_tokens
         self.temperature = temperature
@@ -102,7 +103,9 @@ class OpenAILLM(BaseLLM):
             return
         try:
             from openai import OpenAI
-            self._client = OpenAI(api_key=api_key)
+            base_url = os.getenv("OPENAI_BASE_URL", None)
+            self.MODEL_NAME = os.getenv("OPENAI_MODEL", "openai/gpt-4o-mini")
+            self._client = OpenAI(api_key=api_key, base_url=base_url) if base_url else OpenAI(api_key=api_key)
         except ImportError:
             logger.warning("openai package not installed")
     def generate(self, question, context, domain="general"):
@@ -119,9 +122,65 @@ class OpenAILLM(BaseLLM):
             return "ERROR: OpenAI call failed"
     def is_available(self): return self._client is not None
 
+class TogetherLLM(BaseLLM):
+    # Same Llama-3.3-70B as Groq — results are directly comparable
+    MODEL_NAME = "meta-llama/Llama-3.3-70B-Instruct-Turbo"
+    BASE_URL   = "https://api.together.xyz/v1"
+
+    def __init__(self, max_tokens: int = 300, temperature: float = 0.0):
+        self.max_tokens  = max_tokens
+        self.temperature = temperature
+        self._client     = None
+        self._load()
+
+    def _load(self):
+        api_key = os.getenv("TOGETHER_API_KEY", "")
+        if not api_key:
+            logger.warning("TOGETHER_API_KEY not set — Together LLM unavailable")
+            return
+        try:
+            # Together AI is OpenAI-API-compatible — no extra package needed
+            from openai import OpenAI
+            self._client = OpenAI(
+                api_key  = api_key,
+                base_url = self.BASE_URL,
+            )
+            logger.info(f"Together LLM ready: {self.MODEL_NAME}")
+        except ImportError:
+            logger.warning("openai package not installed. Run: pip install openai")
+
+    def generate(self, question: str, context: str, domain: str = "general") -> str:
+        import time
+        time.sleep(0.3)          # light throttle — Together has generous limits
+        if self._client is None:
+            return "ERROR: Together client not available"
+        prompt = RAG_PROMPT.format(domain=domain, context=context[:3000], question=question)
+        try:
+            response = self._client.chat.completions.create(
+                model       = self.MODEL_NAME,
+                messages    = [{"role": "user", "content": prompt}],
+                max_tokens  = self.max_tokens,
+                temperature = self.temperature,
+            )
+            return response.choices[0].message.content.strip()
+        except Exception as e:
+            logger.error(f"Together generation error: {e}")
+            return "ERROR: Together call failed"
+
+    def is_available(self) -> bool:
+        return self._client is not None
+
+
 def get_llm(provider: Optional[str] = None) -> BaseLLM:
-    provider = provider or os.getenv("LLM_PROVIDER", "local").lower()
-    if provider == "groq":
+    provider = (provider or os.getenv("LLM_PROVIDER", "local")).lower()
+
+    if provider == "together":
+        llm = TogetherLLM()
+        if not llm.is_available():
+            logger.warning("Together not available — falling back to local")
+            return LocalLLM()
+        return llm
+    elif provider == "groq":
         llm = GroqLLM()
         if not llm.is_available():
             logger.warning("Groq not available — falling back to local")
