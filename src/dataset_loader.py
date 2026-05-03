@@ -164,6 +164,7 @@ class DatasetLoader:
 
         # Try public legal datasets in order of availability
         public_datasets = [
+            ("isaacus/open-australian-legal-qa", "default", "train"),
             ("joelito/legal_mc_questions", None,   "test"),
             ("coastalcph/legalBench",      "abercrombie", "test"),
         ]
@@ -180,7 +181,11 @@ class DatasetLoader:
                     row      = ds[idx]
                     question = str(row.get("question", row.get("input",  "")))
                     answer   = str(row.get("answer",   row.get("output", row.get("label", ""))))
-                    context  = str(row.get("context",  row.get("text",   row.get("passage", ""))))
+                    # For isaacus/open-australian-legal-qa, use source text as context
+                    if isinstance(row.get("source"), dict):
+                        context = str(row["source"].get("text", ""))
+                    else:
+                        context = str(row.get("context", row.get("text", row.get("passage", ""))))
                     samples.append({
                         "id"          : f"lg_{idx:04d}",
                         "domain"      : "legal",
@@ -210,43 +215,50 @@ class DatasetLoader:
 
     def _load_financebench(self) -> List[Dict]:
         """
-        FinanceBench — financial QA from 10-K / 10-Q / earnings.
-        HuggingFace: 'PatronusAI/financebench'
+        FinanceBench + financial-qa-10K combined.
         """
-        try:
-            ds = load_dataset("PatronusAI/financebench",
-                              split="train")
-        except Exception as e:
-            logger.warning(f"FinanceBench download failed: {e}. Using fallback.")
-            return self._fallback_finance(self.sample_size)
-
         samples = []
-        indices = random.sample(range(len(ds)), min(self.sample_size, len(ds)))
-
-        for idx in indices:
-            row      = ds[idx]
-            question = str(row.get("question", ""))
-            answer   = str(row.get("answer",   ""))
-            context  = str(row.get("evidence", row.get("context", "")))
-
-            samples.append({
-                "id"          : f"fn_{idx:04d}",
-                "domain"      : "finance",
-                "question"    : question,
-                "answer"      : answer,
-                "context"     : context[:2000],
-                "answer_type" : self._infer_type(answer),
-                "difficulty"  : self._infer_difficulty(question),
-                "source_doc"  : str(row.get("doc_name",
-                                            row.get("company", f"FinDoc_{idx}"))),
-            })
-
-        logger.info(f"  FinanceBench: {len(samples)} samples prepared")
+        try:
+            ds1 = load_dataset("PatronusAI/financebench", split="train")
+            for idx in range(len(ds1)):
+                row = ds1[idx]
+                samples.append({
+                    "id"          : f"fn_{idx:04d}",
+                    "domain"      : "finance",
+                    "question"    : str(row.get("question", "")),
+                    "answer"      : str(row.get("answer", "")),
+                    "context"     : (lambda e: " ".join([x.get("evidence_text","") for x in e]) if isinstance(e, list) else str(e))( row.get("evidence", row.get("context", "")))[:2000],
+                    "answer_type" : self._infer_type(str(row.get("answer", ""))),
+                    "difficulty"  : self._infer_difficulty(str(row.get("question", ""))),
+                    "source_doc"  : str(row.get("doc_name", row.get("company", f"FinDoc_{idx}"))),
+                })
+            logger.info(f"  FinanceBench: {len(samples)} samples loaded")
+        except Exception as e:
+            logger.warning(f"FinanceBench failed: {e}")
+        if len(samples) < self.sample_size:
+            try:
+                ds2 = load_dataset("virattt/financial-qa-10K", split="train")
+                needed = self.sample_size - len(samples)
+                indices = random.sample(range(len(ds2)), min(needed, len(ds2)))
+                for i, idx in enumerate(indices):
+                    row = ds2[idx]
+                    samples.append({
+                        "id"          : f"fq_{i:04d}",
+                        "domain"      : "finance",
+                        "question"    : str(row.get("question", "")),
+                        "answer"      : str(row.get("answer", "")),
+                        "context"     : str(row.get("context", ""))[:2000],
+                        "answer_type" : self._infer_type(str(row.get("answer", ""))),
+                        "difficulty"  : self._infer_difficulty(str(row.get("question", ""))),
+                        "source_doc"  : f"{row.get('ticker', 'Unknown')}_{row.get('filing', '')}",
+                    })
+                logger.info(f"  financial-qa-10K: total {len(samples)} samples")
+            except Exception as e:
+                logger.warning(f"financial-qa-10K failed: {e}")
+        if not samples:
+            return self._fallback_finance(self.sample_size)
+        logger.info(f"  Finance total: {len(samples)} samples")
         return samples
-
-    # ─────────────────────────────────────────────────────────────────────────
-    #  HELPERS
-    # ─────────────────────────────────────────────────────────────────────────
 
     def _infer_type(self, answer: str) -> str:
         """
