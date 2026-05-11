@@ -1,0 +1,26 @@
+{
+  "bm25_chunk": {
+    "financebench": {
+      "n": 150,
+      "avg_dhs": 0.396,
+      "failures": 124
+    },
+    "financial_10k": {
+      "n": 250,
+      "avg_dhs": 0.786,
+      "failures": 55
+    }
+  },
+  "dense_chunk": {
+    "financebench": {
+      "n": 150,
+      "avg_dhs": 0.443,
+      "failures": 102
+    },
+    "financial_10k": {
+      "n": 250,
+      "avg_dhs": 0.792,
+      "failures": 52
+    }
+  }
+}
