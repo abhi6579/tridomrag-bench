@@ -1,0 +1,25 @@
+{
+  "model": "meta-llama/llama-3.3-70b-instruct",
+  "config": "dense_chunk",
+  "healthcare": {
+    "avg_dhs": 0.5246,
+    "avg_faithfulness": 0.2332,
+    "avg_attribution": 0.6787,
+    "avg_terminology": 0.759,
+    "failures": 186
+  },
+  "legal": {
+    "avg_dhs": 0.5715,
+    "avg_faithfulness": 0.2872,
+    "avg_attribution": 0.6805,
+    "avg_terminology": 0.8237,
+    "failures": 141
+  },
+  "finance": {
+    "avg_dhs": 0.6661,
+    "avg_faithfulness": 0.4685,
+    "avg_attribution": 0.6649,
+    "avg_terminology": 0.7985,
+    "failures": 150
+  }
+}
