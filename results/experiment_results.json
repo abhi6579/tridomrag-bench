@@ -1,0 +1,296 @@
+{
+  "bm25_chunk": {
+    "healthcare": {
+      "config": "bm25_chunk",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5088,
+      "avg_faithfulness": 0.2171,
+      "avg_attribution": 0.6501,
+      "avg_terminology": 0.7565,
+      "failures": 193,
+      "failure_breakdown": {
+        "F4_attribution": 129,
+        "F3_terminology": 51,
+        "F1_wrong_chunk": 10,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "bm25_chunk",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.5612,
+      "avg_faithfulness": 0.2652,
+      "avg_attribution": 0.6764,
+      "avg_terminology": 0.82,
+      "failures": 147,
+      "failure_breakdown": {
+        "F4_attribution": 88,
+        "F2_numerical_halluc": 23,
+        "F1_wrong_chunk": 25,
+        "F3_terminology": 11
+      }
+    },
+    "finance": {
+      "config": "bm25_chunk",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6381,
+      "avg_faithfulness": 0.4137,
+      "avg_attribution": 0.5497,
+      "avg_terminology": 0.8368,
+      "failures": 180,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 110,
+        "F4_attribution": 60,
+        "F3_terminology": 10
+      }
+    }
+  },
+  "bm25_document": {
+    "healthcare": {
+      "config": "bm25_document",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5012,
+      "avg_faithfulness": 0.2085,
+      "avg_attribution": 0.6429,
+      "avg_terminology": 0.7498,
+      "failures": 199,
+      "failure_breakdown": {
+        "F4_attribution": 131,
+        "F1_wrong_chunk": 13,
+        "F3_terminology": 52,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "bm25_document",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.564,
+      "avg_faithfulness": 0.26,
+      "avg_attribution": 0.6862,
+      "avg_terminology": 0.8213,
+      "failures": 142,
+      "failure_breakdown": {
+        "F4_attribution": 89,
+        "F2_numerical_halluc": 20,
+        "F1_wrong_chunk": 25,
+        "F3_terminology": 8
+      }
+    },
+    "finance": {
+      "config": "bm25_document",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6355,
+      "avg_faithfulness": 0.4197,
+      "avg_attribution": 0.559,
+      "avg_terminology": 0.8218,
+      "failures": 177,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 110,
+        "F4_attribution": 58,
+        "F3_terminology": 9
+      }
+    }
+  },
+  "dense_chunk": {
+    "healthcare": {
+      "config": "dense_chunk",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5198,
+      "avg_faithfulness": 0.2326,
+      "avg_attribution": 0.6735,
+      "avg_terminology": 0.749,
+      "failures": 191,
+      "failure_breakdown": {
+        "F4_attribution": 119,
+        "F3_terminology": 57,
+        "F1_wrong_chunk": 12,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "dense_chunk",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.5693,
+      "avg_faithfulness": 0.2825,
+      "avg_attribution": 0.6804,
+      "avg_terminology": 0.8213,
+      "failures": 141,
+      "failure_breakdown": {
+        "F1_wrong_chunk": 16,
+        "F2_numerical_halluc": 26,
+        "F4_attribution": 92,
+        "F3_terminology": 7
+      }
+    },
+    "finance": {
+      "config": "dense_chunk",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6648,
+      "avg_faithfulness": 0.4695,
+      "avg_attribution": 0.6609,
+      "avg_terminology": 0.7973,
+      "failures": 153,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 95,
+        "F4_attribution": 42,
+        "F3_terminology": 16
+      }
+    }
+  },
+  "dense_document": {
+    "healthcare": {
+      "config": "dense_document",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5133,
+      "avg_faithfulness": 0.2205,
+      "avg_attribution": 0.6757,
+      "avg_terminology": 0.7415,
+      "failures": 196,
+      "failure_breakdown": {
+        "F4_attribution": 117,
+        "F3_terminology": 62,
+        "F1_wrong_chunk": 14,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "dense_document",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.5641,
+      "avg_faithfulness": 0.2692,
+      "avg_attribution": 0.6768,
+      "avg_terminology": 0.8267,
+      "failures": 142,
+      "failure_breakdown": {
+        "F4_attribution": 94,
+        "F2_numerical_halluc": 25,
+        "F1_wrong_chunk": 16,
+        "F3_terminology": 7
+      }
+    },
+    "finance": {
+      "config": "dense_document",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6621,
+      "avg_faithfulness": 0.4633,
+      "avg_attribution": 0.6612,
+      "avg_terminology": 0.7952,
+      "failures": 152,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 96,
+        "F3_terminology": 15,
+        "F4_attribution": 41
+      }
+    }
+  },
+  "hybrid_chunk": {
+    "healthcare": {
+      "config": "hybrid_chunk",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5141,
+      "avg_faithfulness": 0.2234,
+      "avg_attribution": 0.6567,
+      "avg_terminology": 0.759,
+      "failures": 191,
+      "failure_breakdown": {
+        "F4_attribution": 126,
+        "F3_terminology": 50,
+        "F1_wrong_chunk": 12,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "hybrid_chunk",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.559,
+      "avg_faithfulness": 0.2677,
+      "avg_attribution": 0.6679,
+      "avg_terminology": 0.8237,
+      "failures": 147,
+      "failure_breakdown": {
+        "F1_wrong_chunk": 19,
+        "F2_numerical_halluc": 26,
+        "F4_attribution": 96,
+        "F3_terminology": 6
+      }
+    },
+    "finance": {
+      "config": "hybrid_chunk",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6574,
+      "avg_faithfulness": 0.4547,
+      "avg_attribution": 0.6046,
+      "avg_terminology": 0.8218,
+      "failures": 161,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 100,
+        "F4_attribution": 51,
+        "F3_terminology": 10
+      }
+    }
+  },
+  "hybrid_document": {
+    "healthcare": {
+      "config": "hybrid_document",
+      "domain": "healthcare",
+      "n_samples": 400,
+      "avg_dhs": 0.5117,
+      "avg_faithfulness": 0.2178,
+      "avg_attribution": 0.6629,
+      "avg_terminology": 0.7523,
+      "failures": 194,
+      "failure_breakdown": {
+        "F4_attribution": 123,
+        "F3_terminology": 55,
+        "F1_wrong_chunk": 13,
+        "F2_numerical_halluc": 3
+      }
+    },
+    "legal": {
+      "config": "hybrid_document",
+      "domain": "legal",
+      "n_samples": 400,
+      "avg_dhs": 0.5696,
+      "avg_faithfulness": 0.2755,
+      "avg_attribution": 0.6833,
+      "avg_terminology": 0.8287,
+      "failures": 142,
+      "failure_breakdown": {
+        "F4_attribution": 92,
+        "F2_numerical_halluc": 24,
+        "F1_wrong_chunk": 18,
+        "F3_terminology": 8
+      }
+    },
+    "finance": {
+      "config": "hybrid_document",
+      "domain": "finance",
+      "n_samples": 400,
+      "avg_dhs": 0.6623,
+      "avg_faithfulness": 0.4541,
+      "avg_attribution": 0.6181,
+      "avg_terminology": 0.8256,
+      "failures": 157,
+      "failure_breakdown": {
+        "F2_numerical_halluc": 95,
+        "F4_attribution": 50,
+        "F3_terminology": 12
+      }
+    }
+  }
+}

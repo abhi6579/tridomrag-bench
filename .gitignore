@@ -1,20 +1,15 @@
-# Python
+﻿# Python
 venv/
 __pycache__/
 *.pyc
 *.pyo
-
 # Environment
 .env
-
-# Data, results, paper
+# Data and paper (not for repo)
 data/
-results/
 paper/
-
 # Phase 2 (not ready yet)
 phase2/
-
 # Logs and OS
 *.log
 .DS_Store
