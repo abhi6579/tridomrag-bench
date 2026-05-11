@@ -109,6 +109,8 @@ class OpenAILLM(BaseLLM):
         except ImportError:
             logger.warning("openai package not installed")
     def generate(self, question, context, domain="general"):
+        import time
+        time.sleep(0.5)
         if self._client is None: return "ERROR: OpenAI client not available"
         prompt = RAG_PROMPT.format(domain=domain, context=context[:3000], question=question)
         try:
@@ -172,8 +174,7 @@ class TogetherLLM(BaseLLM):
 
 
 def get_llm(provider: Optional[str] = None) -> BaseLLM:
-    provider = (provider or os.getenv("LLM_PROVIDER", "local")).lower()
-
+    provider = provider or os.getenv("LLM_PROVIDER", "local").lower()
     if provider == "together":
         llm = TogetherLLM()
         if not llm.is_available():
